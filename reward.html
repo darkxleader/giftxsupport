@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn Rewards</title>
+    <script>
+        let userId = new URLSearchParams(window.location.search).get('user'); 
+        
+        if (!userId) {
+            document.write("<h2>Error: No User ID Found!</h2>");
+            throw new Error("User ID not found.");
+        }
+
+        let timer = 15; // 15 seconds countdown
+        function updateTimer() {
+            if (timer > 0) {
+                document.getElementById("countdown").innerText = timer + " seconds remaining...";
+                timer--;
+                setTimeout(updateTimer, 1000);
+            } else {
+                creditPoints();
+            }
+        }
+
+        function creditPoints() {
+            let apiUrl = `https://api.telegram.org/7772783618:AAEl2lxMAiKB9zBFwRnXPUosTFGV5qfADCI/sendMessage`;
+
+            fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: userId,
+                    text: "✅ You earned 5 points for watching the ad!"
+                })
+            });
+
+            fetch(`https://gifts_xxbot.bots.business/api/command/addPoints?user=${userId}&points=5`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("status").innerText = "✅ Points Added!";
+                })
+                .catch(error => {
+                    document.getElementById("status").innerText = "❌ Error adding points!";
+                });
+        }
+    </script>
+</head>
+<body onload="updateTimer()">
+    <h1>🎁 Earn Rewards</h1>
+    <h3 id="countdown">15 seconds remaining...</h3>
+    <p>Watch this ad for 15 seconds to earn **5 points!**</p>
+    
+    <!-- Adsterra Ad Script -->
+    <script type='text/javascript' src='//pl26138185.effectiveratecpm.com/4a/bb/52/4abb5299b79b2ecd7fe6dbfda5d31b5a.js'></script>
+    
+    <h2 id="status"></h2>
+</body>
+</html>
